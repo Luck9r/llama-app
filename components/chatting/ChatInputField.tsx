@@ -5,9 +5,12 @@ import IconButton from "@/components/IconButton";
 
 type Props = {
     style?: ViewStyle;
+    onPress?: () => void;
+    onChangeText?: (text: string) => void;
+    text: string;
 }
-export default function ChatInputField( { style }: Props) {
-    const [text, onChangeText] = React.useState('');
+export default function ChatInputField( { style, onPress, onChangeText, text }: Props) {
+
     // const [number, onChangeNumber] = React.useState('');
 
     return (
@@ -20,7 +23,7 @@ export default function ChatInputField( { style }: Props) {
                     placeholder={"Type a message..."}
                     value={text}
                 />
-                <IconButton style={styles.sendButton} name={'paper-plane'} onPress={() => {console.log("E");}}> </IconButton>
+                <IconButton style={styles.sendButton} name={'paper-plane'} onPress={onPress}> </IconButton>
             </View>
         </KeyboardAvoidingView>
     );

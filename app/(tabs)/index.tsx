@@ -1,21 +1,37 @@
 import ChatInputField from "@/components/chatting/ChatInputField";
-import {Animated, SafeAreaView, View} from "react-native";
-import React from "react";
+import {Animated, SafeAreaView, StyleSheet, View} from "react-native";
+import React, {useState} from "react";
 import {Colors} from "@/constants/Colors";
-import {StyleSheet} from "react-native";
 import ChatMessage from "@/components/chatting/ChatMessage";
 import ScrollView = Animated.ScrollView;
 
+
+type Message = {
+    message: string,
+    user: boolean,
+}
+
 export default function ChatScreen() {
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [inputText, onChangeInputText] = React.useState('');
+    const sendMessage = () => {
+        setMessages([...messages, {message: inputText, user: true}]);
+        onChangeInputText('');
+        // add a test response
+        setTimeout(() => {
+            setMessages([...messages, {message: inputText, user: true}, {message: "This is a test response", user: false}]);
+        }, 1000);
+    }
     return (
         <SafeAreaView style={styles.background}>
             <ScrollView automaticallyAdjustContentInsets={true} contentContainerStyle={styles.container}>
 
                     <View style={styles.messageBox}>
-                        <ChatMessage style={styles.userMessage} message='This is a test message'/>
-                        <ChatMessage style={styles.botMessage} message='This is a test response'/>
+                        {messages.map((message: Message, index) => {
+                            return <ChatMessage key={index} style={message.user ? styles.userMessage : styles.botMessage} message={message.message}/>
+                        })}
                     </View>
-                    <ChatInputField style={styles.inputField}/>
+                    <ChatInputField style={styles.inputField} onPress={sendMessage} onChangeText={onChangeInputText} text={inputText}/>
             </ScrollView>
 
         </SafeAreaView>
