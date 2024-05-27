@@ -26,7 +26,7 @@ export default function ChatScreen() {
     }, 1000);
   };
   return (
-    <SafeAreaView style={styles.background}>
+    <SafeAreaView className="bg-slate-700 flex-1">
       <ScrollView
         automaticallyAdjustContentInsets={true}
         contentContainerStyle={styles.container}
@@ -61,10 +61,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
   },
-  background: {
-    backgroundColor: Colors.dark.background,
-    flex: 1,
-  },
+  // background: {
+  //   backgroundColor: Colors.dark.background,
+  //   flex: 1,
+  // },
   userMessage: {
     alignSelf: "flex-end",
     backgroundColor: Colors.dark.messageBackgroundUser,
