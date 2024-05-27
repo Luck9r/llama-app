@@ -1,6 +1,5 @@
 
 
 export default function HistoryScreen() {
-    return (<></>
-    );
+  return <></>;
 }
