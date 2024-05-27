@@ -1,10 +1,10 @@
 import React from "react";
-import {StyleSheet, Text, View, ViewStyle} from "react-native";
+import { StyleSheet, Text, View, ViewStyle } from "react-native";
 
 type Props = {
-    style?: ViewStyle;
-    message: string;
-}
+  style?: ViewStyle;
+  message: string;
+};
 
 export default function ChatMessage({ style, message }: Props) {
   return (
@@ -21,7 +21,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     margin: 5,
   },
-  message: {
-
-  },
+  message: {},
 });
