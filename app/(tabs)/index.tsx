@@ -1,7 +1,6 @@
 import ChatInputField from "@/components/chatting/ChatInputField";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
-import { Colors } from "@/constants/Colors";
 import ChatMessage from "@/components/chatting/ChatMessage";
 import ScrollView = Animated.ScrollView;
 
@@ -28,16 +27,19 @@ export default function ChatScreen() {
   return (
     <SafeAreaView className="bg-slate-700 flex-1">
       <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "space-between",
+        }}
         automaticallyAdjustContentInsets={true}
-        contentContainerStyle={styles.container}
       >
-        <View style={styles.messageBox}>
+        <View className="flex-1 flex-col justify-end p-3">
           {messages.map((message: Message, index) => {
             return (
               <ChatMessage
                 key={index}
-                style={message.user ? styles.userMessage : styles.botMessage}
                 message={message.message}
+                user={message.user}
               />
             );
           })}
@@ -54,31 +56,31 @@ export default function ChatScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    flexWrap: "wrap",
-    flexDirection: "column",
-    justifyContent: "space-between",
-  },
+  // container: {
+  //   flex: 1,
+  //   padding: 10,
+  //   flexWrap: "wrap",
+  //   flexDirection: "column",
+  //   justifyContent: "space-between",
+  // },
   // background: {
   //   backgroundColor: Colors.dark.background,
   //   flex: 1,
   // },
-  userMessage: {
-    alignSelf: "flex-end",
-    backgroundColor: Colors.dark.messageBackgroundUser,
-  },
-  botMessage: {
-    alignSelf: "flex-start",
-    backgroundColor: Colors.dark.messageBackgroundBot,
-  },
-  messageBox: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    padding: 10,
-  },
+  // userMessage: {
+  //   alignSelf: "flex-end",
+  //   backgroundColor: Colors.dark.messageBackgroundUser,
+  // },
+  // botMessage: {
+  //   alignSelf: "flex-start",
+  //   backgroundColor: Colors.dark.messageBackgroundBot,
+  // },
+  // messageBox: {
+  //   flex: 1,
+  //   flexDirection: "column",
+  //   justifyContent: "flex-end",
+  //   padding: 10,
+  // },
   inputField: {
     padding: 5,
     // height: 50,

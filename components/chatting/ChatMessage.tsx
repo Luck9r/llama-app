@@ -1,25 +1,23 @@
 import React from "react";
-import { StyleSheet, Text, View, ViewStyle } from "react-native";
+import { Text, View } from "react-native";
 
 type Props = {
-  style?: ViewStyle;
   message: string;
+  className?: string;
+  user: boolean;
 };
 
-export default function ChatMessage({ style, message }: Props) {
+export default function ChatMessage({ message, className, user }: Props) {
   return (
-    <View style={[styles.container, style]}>
-      <Text style={[styles.message, style]}>{message}</Text>
+    <View
+      className={
+        user
+          ? " bg-indigo-200 rounded-lg m-2 p-3 me-auto"
+          : "justify-self-start bg-indigo-400 rounded-lg m-2 p-3"
+      }
+      style={{ alignSelf: user ? "flex-end" : "flex-start" }}
+    >
+      <Text className={className + ""}>{message}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: "#f0f0f0",
-    margin: 5,
-  },
-  message: {},
-});

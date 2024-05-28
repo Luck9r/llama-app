@@ -24,8 +24,10 @@ export default function ChatInputField({
   // const [number, onChangeNumber] = React.useState('');
 
   return (
+    // TODO: Fix the KeyboardAvoidingView, it's not scrolling up when there's too many messages
     <KeyboardAvoidingView
-      style={styles.container}
+      // style={styles.container}
+      className={"w-max"}
       behavior={"padding"}
       keyboardVerticalOffset={60}
     >
