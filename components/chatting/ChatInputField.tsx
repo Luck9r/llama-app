@@ -1,83 +1,43 @@
 import React from "react";
-import {
-  KeyboardAvoidingView,
-  StyleSheet,
-  TextInput,
-  View,
-  ViewStyle,
-} from "react-native";
-import { Colors } from "@/constants/Colors";
+import { KeyboardAvoidingView, TextInput, View } from "react-native";
 import IconButton from "@/components/IconButton";
 
 type Props = {
-  style?: ViewStyle;
   onPress?: () => void;
   onChangeText?: (text: string) => void;
+  className?: string;
   text: string;
+  disabled: boolean;
 };
+
 export default function ChatInputField({
-  style,
   onPress,
   onChangeText,
+  className,
   text,
+  disabled,
 }: Props) {
-  // const [number, onChangeNumber] = React.useState('');
-
   return (
-    // TODO: Fix the KeyboardAvoidingView, it's not scrolling up when there's too many messages
-    <KeyboardAvoidingView
-      // style={styles.container}
-      className={"w-max"}
-      behavior={"padding"}
-      keyboardVerticalOffset={60}
-    >
-      <View style={[styles.field, style]}>
+    <KeyboardAvoidingView className="w-full" behavior="padding">
+      <View
+        className={`flex flex-row items-center p-2 bg-slate-800 rounded-lg m-2 ${className}`}
+      >
         <TextInput
-          style={styles.textInput}
+          className="flex-1 text-white p-3 bg-slate-800 rounded-l-lg"
           onChangeText={onChangeText}
-          id={"chatInput"}
-          placeholder={"Type a message..."}
+          id="chatInput"
+          placeholder="Type a message..."
           value={text}
+          editable={!disabled}
         />
         <IconButton
-          style={styles.sendButton}
-          name={"paper-plane"}
-          onPress={onPress}
-        >
-          {" "}
-        </IconButton>
+          className={
+            disabled ? "p-3 rounded-lg text-gray-600" : "p-3 rounded-lg"
+          }
+          name="paper-plane"
+          onPress={disabled ? undefined : onPress}
+        />
       </View>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-  },
-  field: {
-    padding: 10,
-    flex: 1,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    backgroundColor: Colors.dark.background,
-    borderColor: Colors.dark.tint,
-    borderWidth: 2,
-    borderCurve: "circular",
-    borderRadius: 10,
-    justifyContent: "space-between",
-  },
-  textInput: {
-    color: Colors.dark.text,
-    padding: 20,
-    flex: 1,
-    alignSelf: "stretch",
-  },
-  sendButton: {
-    color: Colors.dark.text,
-    backgroundColor: Colors.dark.background,
-    alignSelf: "flex-end",
-    padding: 5,
-    paddingTop: 7,
-  },
-});

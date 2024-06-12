@@ -1,18 +1,30 @@
-import { TouchableHighlight, View } from "react-native";
 import React, { type ComponentProps } from "react";
+import { TouchableHighlight, View } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import type { IconProps } from "@expo/vector-icons/build/createIconSet";
+import { styled } from "nativewind";
+import { IconProps } from "@expo/vector-icons/build/createIconSet";
+
+const StyledTouchableHighlight = styled(TouchableHighlight);
+const StyledIonicons = styled(Ionicons);
 
 export default function IconButton({
-  style,
+  className,
   onPress,
   ...rest
 }: IconProps<ComponentProps<typeof Ionicons>["name"]>) {
   return (
-    <TouchableHighlight onPress={onPress} style={style}>
+    <StyledTouchableHighlight
+      onPress={onPress}
+      className={className + " rounded-lg"}
+      underlayColor="rgba(0,0,0,0)"
+    >
       <View>
-        <Ionicons size={28} style={style} {...rest} />
+        <StyledIonicons
+          className={"text-white " + className}
+          size={28}
+          {...rest}
+        />
       </View>
-    </TouchableHighlight>
+    </StyledTouchableHighlight>
   );
 }
