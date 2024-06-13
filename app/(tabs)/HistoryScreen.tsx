@@ -1,5 +1,11 @@
-import React from "react";
-import { SafeAreaView, FlatList, Text, TouchableOpacity } from "react-native";
+import React, { useCallback } from "react";
+import {
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 import ConversationItem, {
   Conversation,
 } from "@/components/chatting/ConversationItem";
@@ -11,44 +17,60 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 const HistoryScreen: React.FC = () => {
   const [conversations, setConversations] = React.useState<Conversation[]>([]);
   const navigation = useNavigation<NavigationProp<TabNavigatorParamList>>();
-  React.useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${await AsyncStorage.getItem("token")}`,
-          },
-        };
-        const response = await axios.get(
-          `${process.env.EXPO_PUBLIC_API_URL}conversation`,
-          config,
-        );
-        setConversations(response.data);
-      } catch (error: any) {
-        alert("Error\n" + error.message);
-      }
-    };
-    fetchConversations().then();
+  const isFocused = navigation.isFocused();
+  const [refreshingConversations, setRefreshingConversations] =
+    React.useState(false);
+  const fetchConversations = useCallback(async () => {
+    setRefreshingConversations(true);
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${await AsyncStorage.getItem("token")}`,
+        },
+      };
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_API_URL}/conversation`,
+        config,
+      );
+      setConversations(response.data);
+    } catch (error: any) {
+      alert("Error\n" + error.message);
+    }
+    setRefreshingConversations(false);
   }, []);
 
+  React.useEffect(() => {
+    fetchConversations().then();
+  }, [navigation, isFocused]);
+
   return (
-    <SafeAreaView className="bg-slate-700 flex-1">
+    <SafeAreaView className="bg-slate-700 min-h-full">
       <Text className="text-white mt-2 text-2xl font-bold p-4">
         Chat History
       </Text>
       <TouchableOpacity
-        className="bg-blue-500 p-3 my-2 rounded-lg items-center ml-4 mr-4"
+        className="bg-blue-500 p-3 rounded-lg items-center m-4"
         onPress={() =>
           navigation.navigate("ChatScreen", { conversationId: -1 })
         }
       >
         <Text className="text-white text-lg font-bold">New Chat</Text>
       </TouchableOpacity>
-      <FlatList
-        className="pl-4 pr-4"
-        data={conversations}
-        renderItem={({ item }) => <ConversationItem conversation={item} />}
-      />
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}
+        className="flex-1"
+        automaticallyAdjustContentInsets={true}
+      >
+        <RefreshControl
+          refreshing={refreshingConversations}
+          onRefresh={fetchConversations}
+        />
+        {conversations.map((item) => (
+          <ConversationItem key={item.id} conversation={item} />
+        ))}
+      </ScrollView>
     </SafeAreaView>
   );
 };

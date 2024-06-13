@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { SafeAreaView, View, ScrollView } from "react-native";
+import { SafeAreaView, View, ScrollView, RefreshControl } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChatInputField from "@/components/chatting/ChatInputField";
@@ -21,6 +21,7 @@ const ChatScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<TabNavigatorParamList>>();
   const route = useRoute<RouteProp<TabNavigatorParamList, "ChatScreen">>();
   const { conversationId } = route.params;
+  const [refreshingChat, setRefreshingChat] = useState(false);
 
   useEffect(() => {
     if (conversationId === -1) {
@@ -35,8 +36,8 @@ const ChatScreen: React.FC = () => {
       const token = await AsyncStorage.getItem("token");
       const response = await axios.post(
         conversationId !== -1
-          ? `${process.env.EXPO_PUBLIC_API_URL}llama/${conversationId}`
-          : `${process.env.EXPO_PUBLIC_API_URL}llama`,
+          ? `${process.env.EXPO_PUBLIC_API_URL}/llama/${conversationId}`
+          : `${process.env.EXPO_PUBLIC_API_URL}/llama`,
         {
           message: inputText,
           userId: await AsyncStorage.getItem("userId"),
@@ -60,24 +61,28 @@ const ChatScreen: React.FC = () => {
     setSendDisabled(false);
   }, [inputText, conversationId, navigation]);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      if (conversationId === -1) return;
-      try {
-        const token = await AsyncStorage.getItem("token");
-        const response = await axios.get(
-          `${process.env.EXPO_PUBLIC_API_URL}message/${conversationId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+  const fetchMessages = async () => {
+    if (conversationId === -1) return;
+    setRefreshingChat(true);
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_API_URL}/message/${conversationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
-        setMessages(response.data);
-      } catch (error) {
-        console.error("Failed to fetch messages:", error);
-      }
-    };
+        },
+      );
+      setMessages(response.data);
+    } catch (error: any) {
+      alert("Conversation not found!\nMaybe you deleted it?\n" + error.message);
+      navigation.navigate("ChatScreen", { conversationId: -1 });
+    }
+    setRefreshingChat(false);
+  };
+
+  useEffect(() => {
     fetchMessages().then();
   }, [conversationId, isFocused, sendMessage]);
 
@@ -90,6 +95,7 @@ const ChatScreen: React.FC = () => {
         }}
         automaticallyAdjustContentInsets={true}
       >
+        <RefreshControl refreshing={refreshingChat} onRefresh={fetchMessages} />
         <View className="flex-1 flex-col justify-end p-3">
           {messages.map((message, index) => (
             <ChatMessage

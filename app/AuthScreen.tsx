@@ -19,7 +19,7 @@ const AuthScreen = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        `${process.env.EXPO_PUBLIC_API_URL}auth/login`,
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/login`,
         {
           email: username,
           password,
