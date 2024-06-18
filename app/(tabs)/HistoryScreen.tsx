@@ -13,6 +13,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TabNavigatorParamList } from "@/app/navigatorParams";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
+import * as constants from "@/constants";
 
 const HistoryScreen: React.FC = () => {
   const [conversations, setConversations] = React.useState<Conversation[]>([]);
@@ -29,7 +30,7 @@ const HistoryScreen: React.FC = () => {
         },
       };
       const response = await axios.get(
-        `${process.env.EXPO_PUBLIC_API_URL}/conversation`,
+        `${constants.API_URL}/conversation`,
         config,
       );
       setConversations(response.data);
@@ -38,6 +39,21 @@ const HistoryScreen: React.FC = () => {
     }
     setRefreshingConversations(false);
   }, []);
+
+  const deleteConversation = async (id: number) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${await AsyncStorage.getItem("token")}`,
+        },
+      };
+      await axios.delete(`${constants.API_URL}/conversation/${id}`, config);
+    } catch (error: any) {
+      alert("Error\n" + error.message);
+    }
+    fetchConversations().then();
+    console.log("Deleted conversation with id", id);
+  };
 
   React.useEffect(() => {
     fetchConversations().then();
@@ -56,19 +72,17 @@ const HistoryScreen: React.FC = () => {
       >
         <Text className="text-white text-lg font-bold">New Chat</Text>
       </TouchableOpacity>
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-        }}
-        className="flex-1"
-        automaticallyAdjustContentInsets={true}
-      >
+      <ScrollView className="flex-1" automaticallyAdjustContentInsets={true}>
         <RefreshControl
           refreshing={refreshingConversations}
           onRefresh={fetchConversations}
         />
         {conversations.map((item) => (
-          <ConversationItem key={item.id} conversation={item} />
+          <ConversationItem
+            key={item.id}
+            conversation={item}
+            onTrashPress={() => deleteConversation(item.id)}
+          />
         ))}
       </ScrollView>
     </SafeAreaView>

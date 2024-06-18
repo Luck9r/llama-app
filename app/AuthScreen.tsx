@@ -10,6 +10,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootNavigatorParamList } from "@/app/navigatorParams";
+import * as constants from "@/constants";
 
 const AuthScreen = () => {
   const navigation = useNavigation<NavigationProp<RootNavigatorParamList>>();
@@ -18,13 +19,10 @@ const AuthScreen = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(
-        `${process.env.EXPO_PUBLIC_API_URL}/auth/login`,
-        {
-          email: username,
-          password,
-        },
-      );
+      const response = await axios.post(`${constants.API_URL}/auth/login`, {
+        email: username,
+        password,
+      });
       await AsyncStorage.setItem("token", response.data.access_token);
       await AsyncStorage.setItem(
         "userId",

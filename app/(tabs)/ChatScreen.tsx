@@ -12,6 +12,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+import * as constants from "@/constants";
 
 const ChatScreen: React.FC = () => {
   const isFocused = useIsFocused();
@@ -36,8 +37,8 @@ const ChatScreen: React.FC = () => {
       const token = await AsyncStorage.getItem("token");
       const response = await axios.post(
         conversationId !== -1
-          ? `${process.env.EXPO_PUBLIC_API_URL}/llama/${conversationId}`
-          : `${process.env.EXPO_PUBLIC_API_URL}/llama`,
+          ? `${constants.API_URL}/llama/${conversationId}`
+          : `${constants.API_URL}/llama`,
         {
           message: inputText,
           userId: await AsyncStorage.getItem("userId"),
@@ -67,7 +68,7 @@ const ChatScreen: React.FC = () => {
     try {
       const token = await AsyncStorage.getItem("token");
       const response = await axios.get(
-        `${process.env.EXPO_PUBLIC_API_URL}/message/${conversationId}`,
+        `${constants.API_URL}/message/${conversationId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
