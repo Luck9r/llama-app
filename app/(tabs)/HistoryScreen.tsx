@@ -81,7 +81,6 @@ const HistoryScreen: React.FC = () => {
         } catch (error: any) {
           alert("Error\n" + error.message);
         }
-        console.log("Deleted conversation with id", id);
       });
     }
   };
